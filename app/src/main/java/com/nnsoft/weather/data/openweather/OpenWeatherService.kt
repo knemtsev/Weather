@@ -1,10 +1,7 @@
 package com.nnsoft.weather.data.openweather
 
 import com.nnsoft.weather.data.openweather.entities.WeatherResult
-import io.reactivex.rxjava3.core.Flowable
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.Flowable
 
 class OpenWeatherService {
     private val retrofit by lazy { ServiceBuilder.buildService(OpenWeatherApi::class.java) }

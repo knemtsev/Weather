@@ -3,7 +3,7 @@ package com.nnsoft.weather.data.repository
 import android.location.Location
 import com.nnsoft.weather.data.entities.MyLocation
 import com.nnsoft.weather.data.entities.WeatherData
-import com.nnsoft.weather.util.timeInMinutes
+import com.nnsoft.weather.util.Common
 import io.realm.Realm
 import io.realm.kotlin.where
 import java.util.*
@@ -23,7 +23,7 @@ class WeatherLocal {
         Realm.getDefaultInstance()
             .use { realm ->
                 realm.executeTransaction {
-                    data.time = timeInMinutes()
+                    data.time = Common.timeInMinutes()
                     it.insertOrUpdate(data)
                 }
             }

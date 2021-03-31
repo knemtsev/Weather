@@ -1,8 +1,7 @@
 package com.nnsoft.weather.data.openweather
 
 import com.nnsoft.weather.data.openweather.entities.WeatherResult
-import io.reactivex.rxjava3.core.Flowable
-import retrofit2.Call
+import io.reactivex.Flowable
 import retrofit2.http.GET
 import retrofit2.http.Query
 

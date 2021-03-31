@@ -1,8 +1,5 @@
 package com.nnsoft.weather.data.entities
 
-import android.location.Location
-import com.nnsoft.weather.util.UUIDBase64
-import com.nnsoft.weather.util.locRound
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 

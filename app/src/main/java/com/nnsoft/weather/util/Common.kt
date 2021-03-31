@@ -5,6 +5,8 @@ import java.nio.ByteBuffer
 import java.util.*
 import kotlin.math.roundToInt
 
+val TAG="WEATHER"
+
 object Common {
     fun timeInMinutes(): Long = GregorianCalendar.getInstance().timeInMillis / 60000
 

@@ -21,8 +21,9 @@ import com.nnsoft.weather.R
 import com.nnsoft.weather.data.repository.WeatherRepository
 import com.nnsoft.weather.databinding.MainActivityBinding
 import com.nnsoft.weather.ui.di.DaggerAppComponent
-import com.nnsoft.weather.util.locRound
 import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -61,6 +62,13 @@ class MainActivity : AppCompatActivity() {
                 subscribeOnLocation()
             }
 
+            viewModel._data
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Log.i("WEATHER DATA",""+it.temp)
+                }.dispose()
+
         } else {
             bind.gplayMessage.text=
                 when(availability){
@@ -76,10 +84,8 @@ class MainActivity : AppCompatActivity() {
     private fun newLocation(location: Location){
         bind.textLocation.text = "lat=${location.latitude} lon=${location.longitude}"
         Log.i("NEW LOCATION",bind.textLocation.text.toString())
-        if(firstTime)
-            viewModel.initData(location)
-        else
-            viewModel.refresh(location)
+
+        viewModel.refresh(location)
 
         bind.vm=viewModel
         bind.invalidateAll()
@@ -125,10 +131,10 @@ class MainActivity : AppCompatActivity() {
         when(requestCode){
             LOCATION_REQUEST -> {
                 if( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                    Log.i("", "Agree ext write permission")
+                    Log.i("", "Agree location permission")
                     subscribeOnLocation()
                 } else
-                    Log.i("","Not agree ext write permission")
+                    Log.i("","Not agree location permission")
             }
         }
     }

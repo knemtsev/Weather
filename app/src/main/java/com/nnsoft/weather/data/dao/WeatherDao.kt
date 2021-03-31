@@ -20,7 +20,7 @@ class WeatherDao {
     fun saveWeather(data: WeatherData) {
         Realm.getDefaultInstance()
             .use { realm ->
-                realm.executeTransaction {
+                realm.executeTransactionAsync {
                     data.time = Common.timeInMinutes()
                     it.insertOrUpdate(data)
                 }
