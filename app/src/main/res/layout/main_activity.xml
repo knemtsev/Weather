@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.nnsoft.weather.ui.MainViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity2">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/design_default_color_primary"
+            app:titleEnabled="true"
+            app:title="@string/app_name"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="left">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/app_name"
+                    android:layout_marginLeft="@dimen/def_margin"
+                    android:textSize="18dp"
+                    android:textColor="@color/white"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/but_refresh"
+                    style="@style/ButtonChip"
+                    android:text="@string/but_refresh"
+                    app:chipIcon="@drawable/ic_baseline_refresh_24" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/def_margin"
+            android:layout_marginTop="64dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
+            <LinearLayout
+                android:id="@+id/main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical"
+                tools:context=".ui.main.MainFragment">
+
+                <TextView
+                    android:id="@+id/gplay_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="OK"
+                    android:textSize="24dp"
+                    android:textColor="@color/purple_700"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/weather_icon"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:minWidth="50dp"
+                        android:minHeight="50dp"
+                        android:padding="@dimen/img_margin"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/text_temp"
+                        app:layout_constraintStart_toEndOf="@+id/weather_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text_wind_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/wind_speed"
+                        app:layout_constraintStart_toStartOf="@+id/text_temp"
+                        app:layout_constraintTop_toBottomOf="@+id/text_temp" />
+
+                    <TextView
+                        android:id="@+id/text_wind_dir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/wind_direction"
+                        app:layout_constraintStart_toStartOf="@+id/text_temp"
+                        app:layout_constraintTop_toBottomOf="@+id/text_wind_speed" />
+
+                    <TextView
+                        android:id="@+id/value_temp"
+                        style="@style/TextData"
+                        android:text="@{vm.data.temp.toString()}"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_temp"
+                        app:layout_constraintStart_toStartOf="@+id/value_wind_speed"
+                        app:layout_constraintTop_toTopOf="@+id/text_temp" />
+
+                    <TextView
+                        android:id="@+id/value_wind_speed"
+                        style="@style/TextData"
+                        android:text="@{vm.data.windSpeed.toString()}"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_wind_speed"
+                        app:layout_constraintStart_toStartOf="@+id/value_wind_dir"
+                        app:layout_constraintTop_toTopOf="@+id/text_wind_speed" />
+
+                    <TextView
+                        android:id="@+id/value_wind_dir"
+                        style="@style/TextData"
+                        android:layout_marginStart="32dp"
+                        android:text="@{vm.data.windDeg.toString()}"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_wind_dir"
+                        app:layout_constraintStart_toEndOf="@+id/text_wind_dir"
+                        app:layout_constraintTop_toTopOf="@+id/text_wind_dir" />
+
+                    <TextView
+                        android:id="@+id/units_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="\u2103"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_temp"
+                        app:layout_constraintStart_toEndOf="@+id/value_temp"
+                        app:layout_constraintTop_toTopOf="@+id/text_temp" />
+
+                    <TextView
+                        android:id="@+id/units_wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="m/s"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_wind_speed"
+                        app:layout_constraintStart_toStartOf="@+id/units_temp"
+                        app:layout_constraintTop_toTopOf="@+id/text_wind_speed"
+                        app:layout_constraintVertical_bias="0.0" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</layout>
