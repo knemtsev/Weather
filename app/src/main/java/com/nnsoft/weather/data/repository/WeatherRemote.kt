@@ -1,7 +1,5 @@
 package com.nnsoft.weather.data.repository
 
-import android.location.Location
-import com.nnsoft.weather.data.entities.MyLocation
 import com.nnsoft.weather.data.entities.WeatherData
 import com.nnsoft.weather.data.entities.WeatherDataMapper
 import com.nnsoft.weather.data.openweather.OpenWeatherService

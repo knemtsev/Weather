@@ -1,6 +1,5 @@
 package com.nnsoft.weather
 
-import com.nnsoft.weather.data.dao.MyLocationDao
 import com.nnsoft.weather.data.dao.WeatherDao
 import com.nnsoft.weather.data.db.WeatherDb
 import com.nnsoft.weather.data.openweather.OpenWeatherService
@@ -20,8 +19,7 @@ class WeatherApplication: DaggerApplication() {
     private val appid by lazy { AppId(BuildConfig.APPID) }
 
     val weatherRepository = WeatherRepository(WeatherRemote(OpenWeatherService(),appid),
-        weatherDao = WeatherDao(),
-        locationDao = MyLocationDao()
+        weatherDao = WeatherDao()
         )
 
 

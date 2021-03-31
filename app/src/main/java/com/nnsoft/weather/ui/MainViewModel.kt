@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import com.nnsoft.weather.WeatherApplication
-import com.nnsoft.weather.data.entities.MyLocation
 import com.nnsoft.weather.data.entities.WeatherData
 import com.nnsoft.weather.data.repository.WeatherRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,17 +15,6 @@ class MainViewModel : ViewModel() {
 
     val rep: WeatherRepository by lazy { WeatherApplication.instance.weatherRepository }
 
-    val _location by lazy {
-        rep.getLocation()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .firstElement()
-        .subscribe {
-             location.set(it)
-        }
-    }
-
-    val location = ObservableField<MyLocation>()
 
      var data = ObservableField<WeatherData>()
 
@@ -36,10 +24,8 @@ class MainViewModel : ViewModel() {
         Log.i("REFRESH", loc.latitude.toString())
         rep.setLocation(loc)
 
-        location.set(MyLocation(lat=loc.latitude, lon=loc.longitude))
-
         compositeDisposable.add(
-            rep.getWeatherRemote(MyLocation(lat = loc.latitude, lon=loc.longitude))
+            rep.getWeatherRemote(loc)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnError {
