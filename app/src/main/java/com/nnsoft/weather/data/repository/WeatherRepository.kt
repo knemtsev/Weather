@@ -1,31 +1,30 @@
 package com.nnsoft.weather.data.repository
 
 import android.location.Location
+import com.nnsoft.weather.data.dao.MyLocationDao
+import com.nnsoft.weather.data.dao.WeatherDao
 import com.nnsoft.weather.data.entities.MyLocation
 import com.nnsoft.weather.data.entities.WeatherData
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.realm.Realm
+import io.reactivex.Flowable
+import io.reactivex.Observable
 
-class WeatherRepository(val remote: WeatherRemote, val local: WeatherLocal) {
+class WeatherRepository(
+    private val remote: WeatherRemote,
+    private val weatherDao: WeatherDao,
+    private val locationDao: MyLocationDao
+) {
 
     fun getWeatherRemote(loc: Location): Flowable<WeatherData> {
         return remote.getWeather(loc)
     }
 
-    fun getWeatherLocal(loc: Location): WeatherData? {
-        return local.getWeather()
-    }
-
-    fun getWeatherObservable(loc: Location): Observable<WeatherData> = Observable.create { emitter ->
-
-
+    fun getWeatherLocal(): Flowable<WeatherData>? {
+        return weatherDao.getWeather()
     }
 
     fun getLocationObservable() : Observable<MyLocation> = Observable.create { emitter ->
         do {
-            val myLocation = local.getMyLocation()
+            val myLocation = weatherDao.getMyLocation()
             if (myLocation != null)
                 emitter.onNext(myLocation)
 
@@ -34,6 +33,10 @@ class WeatherRepository(val remote: WeatherRemote, val local: WeatherLocal) {
 
     fun saveWeather(data: WeatherData?) {
         if(data!=null)
-            local.saveWeather(data)
+            weatherDao.saveWeather(data)
+    }
+
+    fun deleteMyLocation() {
+
     }
 }

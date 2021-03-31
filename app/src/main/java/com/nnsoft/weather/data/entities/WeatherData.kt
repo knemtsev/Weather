@@ -14,6 +14,6 @@ open class WeatherData (
     var windDeg: Int?=null,
     var name: String?=null,
     @PrimaryKey
-    val id: Int=1
+    var id: Int=1
 ): RealmObject() {
 }

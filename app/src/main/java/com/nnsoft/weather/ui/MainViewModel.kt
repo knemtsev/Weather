@@ -13,7 +13,7 @@ class MainViewModel : ViewModel() {
 
     val rep: WeatherRepository by lazy { WeatherApplication.instance.weatherRepository }
 
-    var data=
+    var data:WeatherData?=null
 
     fun initData(loc: Location){
         val weather=rep.getWeatherLocal(loc)
@@ -35,6 +35,6 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-
+        rep.deleteMyLocation()
     }
 }
