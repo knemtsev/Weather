@@ -3,28 +3,24 @@ package com.nnsoft.weather.ui
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.nnsoft.weather.R
-import com.nnsoft.weather.data.repository.WeatherRepository
 import com.nnsoft.weather.databinding.MainActivityBinding
-import com.nnsoft.weather.ui.di.DaggerAppComponent
-import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
@@ -33,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private var locationTask: Task<Location>?=null
     lateinit var bind: MainActivityBinding
 
-    var firstTime=true
+    val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,12 +58,20 @@ class MainActivity : AppCompatActivity() {
                 subscribeOnLocation()
             }
 
-            viewModel._data
+
+            compositeDisposable.add(viewModel._data
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.i("WEATHER DATA",""+it.temp)
-                }.dispose()
+                    Log.i("WEATHER DATA", "" + it.temp)
+                })
+
+//            compositeDisposable.add(
+//                viewModel._location
+//                    .subscribe {
+//                        Log.i("LOCATION DATA", ""+it.lat+" "+it.lon)
+//                    }
+//            )
 
         } else {
             bind.gplayMessage.text=
@@ -81,15 +85,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
     private fun newLocation(location: Location){
         bind.textLocation.text = "lat=${location.latitude} lon=${location.longitude}"
-        Log.i("NEW LOCATION",bind.textLocation.text.toString())
+        Log.i("NEW LOCATION", bind.textLocation.text.toString())
 
         viewModel.refresh(location)
 
         bind.vm=viewModel
         bind.invalidateAll()
-        firstTime=false
     }
 
     private fun refresh() {
@@ -99,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun subscribeOnLocation() {
-        locationTask?.addOnSuccessListener { location : Location? ->
+        locationTask?.addOnSuccessListener { location: Location? ->
             location?.let { newLocation(location)}
         }
     }
@@ -126,15 +133,19 @@ class MainActivity : AppCompatActivity() {
     )
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION_REQUEST -> {
-                if( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.i("", "Agree location permission")
                     subscribeOnLocation()
                 } else
-                    Log.i("","Not agree location permission")
+                    Log.i("", "Not agree location permission")
             }
         }
     }
