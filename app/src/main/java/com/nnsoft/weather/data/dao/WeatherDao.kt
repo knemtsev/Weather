@@ -7,13 +7,12 @@ import io.realm.Realm
 import io.realm.kotlin.where
 
 class WeatherDao {
-    fun getWeather(): Flowable<WeatherData>? =
+    fun getWeather(): WeatherData? =
         Realm.getDefaultInstance()
             .use { realm ->
                 return realm.where<WeatherData>()
                     .equalTo("id", 1 as Int)
-                    .findFirstAsync()
-                    .asFlowable()
+                    .findFirst()
             }
 
 

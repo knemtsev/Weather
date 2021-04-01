@@ -22,10 +22,9 @@ class MainViewModel : ViewModel() {
 
     fun refresh(loc: Location) {
         Log.i("REFRESH", loc.latitude.toString())
-        rep.setLocation(loc)
 
         compositeDisposable.add(
-            rep.getWeatherRemote(loc)
+            rep.remoteFlow(loc,1)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnError {
@@ -34,13 +33,13 @@ class MainViewModel : ViewModel() {
                 .subscribe {
                     Log.i("SAVE WEATHER", "" + it.temp)
                     rep.saveWeather(it)
+                    data.set(it)
                 }
         )
     }
 
     override fun onCleared() {
         super.onCleared()
-        rep.deleteMyLocation()
         compositeDisposable.clear()
     }
 }

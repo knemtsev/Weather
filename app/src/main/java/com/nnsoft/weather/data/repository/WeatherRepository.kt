@@ -4,20 +4,20 @@ import android.location.Location
 import android.util.Log
 import com.nnsoft.weather.data.dao.WeatherDao
 import com.nnsoft.weather.data.entities.WeatherData
-import com.nnsoft.weather.util.TAG
-import io.reactivex.Flowable
+import com.nnsoft.weather.util.Common
 import io.reactivex.Observable
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class WeatherRepository(
     private val remote: WeatherRemote,
     private val weatherDao: WeatherDao
 ) {
 
-    fun getWeatherRemote(loc: Location): Flowable<WeatherData> {
-        return remote.getWeather(loc)
-    }
+    fun getWeatherRemote(loc: Location)=remote.getWeather(loc)
 
-    fun getWeatherLocal(): Flowable<WeatherData>? {
+    fun getWeatherLocal(): WeatherData? {
         return weatherDao.getWeather()
     }
 
@@ -26,12 +26,9 @@ class WeatherRepository(
             weatherDao.saveWeather(data)
     }
 
-    fun getWeather(loc: Location, timeout: Int): Observable<WeatherData> = Observable.create { emitter ->
-        val weatherLocal=getWeatherLocal()
-        weatherLocal?.subscribe {
-            Log.i(TAG,""+it.name+" "+it.temp)
+    fun remoteFlow(loc: Location, timeout: Int) : Observable<WeatherData>
+    = Observable.interval(0, timeout.toLong(), TimeUnit.MINUTES, Schedulers.io())
+        .flatMap {
+            getWeatherRemote(loc)
         }
-
-    }
-
 }

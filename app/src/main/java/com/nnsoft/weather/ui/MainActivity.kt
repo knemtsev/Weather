@@ -54,24 +54,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             locationTask=getLocationTask()
+
             if(locationTask!=null){
                 subscribeOnLocation()
             }
-
-
-            compositeDisposable.add(viewModel._data
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Log.i("WEATHER DATA", "" + it.temp)
-                })
-
-//            compositeDisposable.add(
-//                viewModel._location
-//                    .subscribe {
-//                        Log.i("LOCATION DATA", ""+it.lat+" "+it.lon)
-//                    }
-//            )
 
         } else {
             bind.gplayMessage.text=
@@ -100,7 +86,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refresh() {
+        Log.i("refresh","start")
         getLocationTask()?.addOnSuccessListener { location ->
+
             location?.let { newLocation(location)}
         }
     }
