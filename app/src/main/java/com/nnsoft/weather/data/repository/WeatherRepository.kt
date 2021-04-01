@@ -17,9 +17,9 @@ class WeatherRepository(
 
     fun getWeatherRemote(loc: Location)=remote.getWeather(loc)
 
-    fun getWeatherLocal(): WeatherData? {
-        return weatherDao.getWeather()
-    }
+    fun getWeatherLocal()= weatherDao.getWeather()
+
+    fun getWeatherFlowable() = weatherDao.getWeatherFlowable()
 
     fun saveWeather(data: WeatherData?) {
         if (data != null)

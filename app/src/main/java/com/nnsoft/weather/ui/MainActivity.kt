@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -20,6 +21,7 @@ import com.nnsoft.weather.databinding.MainActivityBinding
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -58,6 +60,15 @@ class MainActivity : AppCompatActivity() {
             if(locationTask!=null){
                 subscribeOnLocation()
             }
+
+            val onPropertyChangedCallback=object: Observable.OnPropertyChangedCallback() {
+                override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                    Log.i("PROPERTY CHANGED", "Prop id=" + propertyId)
+                    bind.invalidateAll()
+                }
+            }
+            viewModel.data.addOnPropertyChangedCallback(onPropertyChangedCallback)
+            viewModel.errorMessage.addOnPropertyChangedCallback(onPropertyChangedCallback)
 
         } else {
             bind.gplayMessage.text=
