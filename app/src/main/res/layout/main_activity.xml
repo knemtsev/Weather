@@ -66,7 +66,7 @@
                     android:visibility="gone"
                     android:text="OK"
                     android:textSize="24dp"
-                    android:textColor="@color/purple_700"
+                    android:textColor="@color/red_error"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="@{vm.errorMessageVisible}"
                     android:text="@{vm.errorMessage}"
-                    android:textColor="#FF8888"
+                    android:textColor="@color/red_error"
                     />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -160,7 +160,7 @@
                         android:id="@+id/value_wind_dir"
                         style="@style/TextData"
                         android:layout_marginStart="32dp"
-                        android:text="@{vm.windName()+Integer.toString(vm.data.windDeg)}"
+                        android:text="@{vm.windName()+' '+Integer.toString(vm.data.windDeg)}"
                         app:layout_constraintBottom_toBottomOf="@+id/text_wind_dir"
                         app:layout_constraintStart_toEndOf="@+id/text_wind_dir"
                         app:layout_constraintTop_toTopOf="@+id/text_wind_dir" />

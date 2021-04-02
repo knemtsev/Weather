@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
+        bind.vm=viewModel
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -68,8 +70,6 @@ class MainActivity : AppCompatActivity() {
             if(locationTask!=null){
                 subscribeOnLocation()
             }
-
-            val img=bind.weatherIcon
 
             val onPropertyChangedCallback=object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -166,11 +166,15 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION_REQUEST -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i("", "Agree location permission")
-                    subscribeOnLocation()
-                } else
-                    Log.i("", "Not agree location permission")
+                if(grantResults.size>0) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Log.i("LOCATION_REQUEST", "Agree location permission")
+                        subscribeOnLocation()
+                    } else
+                        Log.i("LOCATION_REQUEST", "Not agree location permission")
+                } else {
+                    Log.i("LOCATION_REQUEST", "grantResults size is 0")
+                }
             }
         }
     }

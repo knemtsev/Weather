@@ -39,7 +39,7 @@ class MainViewModel : ViewModel() {
 
     fun windName(): String {
         return data.get()?.let {
-            app.resources.getStringArray(R.array.wind_direction)[it.windIndex()]+" "
+            app.resources.getStringArray(R.array.wind_direction)[data.get()!!.windIndex()]+" "
         } ?: ""
 
     }
