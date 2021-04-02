@@ -81,8 +81,8 @@ class MainActivity : AppCompatActivity() {
                         val imgURL="https://openweathermap.org/img/w/"+weatherData.iconId+".png"
                         val options: RequestOptions = RequestOptions()
                             .fitCenter()
-                            .placeholder(R.mipmap.ic_launcher_round)
-                            .error(R.mipmap.ic_launcher_round)
+                            .placeholder(R.drawable.ic_baseline_refresh_24)
+                            .error(R.drawable.ic_baseline_refresh_24)
                         Glide.with(this@MainActivity)
                             .load(imgURL)
                             .apply(options)
@@ -114,8 +114,7 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.dispose()
     }
     private fun newLocation(location: Location, force: Boolean = false){
-        bind.textLocation.text = "lat=${location.latitude} lon=${location.longitude}"
-        Log.i("NEW LOCATION", bind.textLocation.text.toString())
+        Log.i("NEW LOCATION", ""+location.latitude+" "+location.longitude)
 
         viewModel.refresh(location, force)
 

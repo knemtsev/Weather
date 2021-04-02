@@ -38,3 +38,12 @@ object Common {
         return Base64.encodeToString(bb.array(), Base64.URL_SAFE + Base64.NO_WRAP).trim('=')
     }
 }
+
+fun java.util.Date.hhmm(): String {
+    return SimpleDateFormat("HH:mm:ss").format(this)
+}
+
+fun java.util.Date.short(): String {
+    return SimpleDateFormat("HH:mm:ss d MMMM").format(this)
+}
+

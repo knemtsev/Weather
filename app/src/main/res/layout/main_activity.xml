@@ -82,10 +82,10 @@
                     />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_location"
+                    android:id="@+id/text_dt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="--"
+                    android:text="@{vm.time()}"
                     />
 
                 <TextView

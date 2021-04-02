@@ -1,6 +1,5 @@
 package com.nnsoft.weather.ui
 
-import android.app.Application
 import android.location.Location
 import android.util.Log
 import android.view.View
@@ -12,16 +11,15 @@ import com.nnsoft.weather.WeatherApplication
 import com.nnsoft.weather.data.entities.WeatherData
 import com.nnsoft.weather.data.repository.WeatherRepository
 import com.nnsoft.weather.util.Common
-import io.reactivex.Observable
+import com.nnsoft.weather.util.hhmm
+import com.nnsoft.weather.util.short
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
-import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 import java.net.SocketTimeoutException
 
 class MainViewModel : ViewModel() {
@@ -47,6 +45,16 @@ class MainViewModel : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
 
     fun dataTime() = Common.minutes2DateS(data.get()?.time ?: 0)
+
+    fun time(): String {
+        var res=""
+        val wd=data.get()
+        if(wd!=null){
+            res+=wd.dt.short()+"\n"
+            res+=wd.sunrise.hhmm()+" - "+wd.sunset.hhmm()
+        }
+        return res
+    }
 
     init {
         init()
@@ -117,7 +125,7 @@ class MainViewModel : ViewModel() {
             }
             is CompositeException -> {
                 Log.e("COMPOSITE EXCEPTION", message)
-                val ce = e as CompositeException
+                val ce = e
                 message =
                     ce.exceptions.joinToString("\n") { e -> e.message.toString() }
             }
@@ -136,3 +144,4 @@ class MainViewModel : ViewModel() {
     }
 
 }
+
