@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
                     val weatherData=viewModel.data.get()
                     if(weatherData!=null) {
                         val imgURL="https://openweathermap.org/img/w/"+weatherData.iconId+".png"
-                        Log.i("LOAD IMAGE", imgURL)
                         val options: RequestOptions = RequestOptions()
                             .fitCenter()
                             .placeholder(R.mipmap.ic_launcher_round)
