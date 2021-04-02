@@ -1,12 +1,17 @@
 package com.nnsoft.weather.ui
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
@@ -18,9 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.nnsoft.weather.R
 import com.nnsoft.weather.databinding.MainActivityBinding
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 
@@ -38,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         bind = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
 
         val availability= GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
         if(availability== ConnectionResult.SUCCESS){
@@ -79,7 +86,6 @@ class MainActivity : AppCompatActivity() {
                 }
             bind.gplayMessage.visibility= View.VISIBLE
         }
-
     }
 
     override fun onDestroy() {
@@ -97,9 +103,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refresh() {
-        Log.i("refresh","start")
+        Log.i("refresh", "start")
         getLocationTask()?.addOnSuccessListener { location ->
-
             location?.let { newLocation(location)}
         }
     }
@@ -149,4 +154,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

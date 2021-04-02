@@ -18,9 +18,10 @@ class WeatherApplication: DaggerApplication() {
 
     private val appid by lazy { AppId(BuildConfig.APPID) }
 
-    val weatherRepository = WeatherRepository(WeatherRemote(OpenWeatherService(),appid),
-        weatherDao = WeatherDao()
-        )
+    val realm: Realm by lazy { Realm.getDefaultInstance() }
+    val weatherRepository by lazy{ WeatherRepository(WeatherRemote(OpenWeatherService(),appid),
+        weatherDao = WeatherDao(realm)
+        )}
 
 
     override fun onCreate() {
@@ -28,6 +29,11 @@ class WeatherApplication: DaggerApplication() {
         instance=this
         Realm.init(this)
         Realm.setDefaultConfiguration(WeatherDb.defRealmCfg)
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        realm.close()
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {

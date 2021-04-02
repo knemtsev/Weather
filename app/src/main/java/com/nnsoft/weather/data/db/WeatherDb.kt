@@ -7,7 +7,7 @@ object WeatherDb {
                     .schemaVersion(0)
                     .name("weather.realm")
                     .modules(WeatherDbModule())
-                    .allowWritesOnUiThread(false)
-                    .allowQueriesOnUiThread(false)
+                    .allowWritesOnUiThread(true)
+                    .allowQueriesOnUiThread(true)
                     .build() }
 }

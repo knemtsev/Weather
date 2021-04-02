@@ -5,12 +5,15 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
+import com.nnsoft.weather.Settings
 import com.nnsoft.weather.WeatherApplication
 import com.nnsoft.weather.data.entities.WeatherData
 import com.nnsoft.weather.data.repository.WeatherRepository
+import com.nnsoft.weather.util.Common
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -34,74 +37,92 @@ class MainViewModel : ViewModel() {
 
     val compositeDisposable = CompositeDisposable()
 
-    fun refresh(loc: Location) {
+    fun dataTime() = Common.minutes2DateS(data.get()?.time ?: 0)
+
+    init {
+        init()
+    }
+
+    private fun init() {
+        val disposable=rep.getWeatherFlowable().toObservable()
+            .doOnError { e -> errorHandling(e) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({ weatherData ->
+                Log.i("DATA CHANGED", weatherData.toString())
+                data.set(weatherData)
+            }, { e ->
+            }, {
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    var remoteDis: Disposable?=null
+
+    fun refresh(loc: Location, force: Boolean=false) {
         Log.i("REFRESH", loc.latitude.toString())
-
         errorMessage.set("")
-        try {
-            compositeDisposable.add(
-//                Observable.concat(
-//                    rep.getWeatherFlowable().toObservable(),
-//                    rep.remoteFlow(loc, 1)
-//                )
-//                rep.getWeatherFlowable().toObservable()
-                rep.remoteFlow(loc, 1)
-                    .doOnError { e ->
-                        var message = e.message.toString()
-                        when (e) {
-                            is HttpException -> {
-                                Log.e("HTTP ERROR", message)
-                            }
-                            is SocketTimeoutException -> {
-                                Log.e("TIMEOUT ERROR", message)
-                            }
-                            is IOException -> {
-                                Log.e("NETWORK ERROR", message)
-                            }
-                            is CompositeException -> {
-                                Log.e("COMPOSITE EXCEPTION", message)
-                                val ce = e as CompositeException
-                                message =
-                                    ce.exceptions.joinToString("\n") { e -> e.message.toString() }
-                            }
-                            else -> {
-                                Log.e("UNKNOWN ERROR", message)
-                            }
-                        }
-                        errorMessage.set(message)
-                    }
-                .onErrorResumeNext(rep.getWeatherFlowable().toObservable())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-//                    .onErrorReturn {
-//                        val localData = rep.getWeatherLocal()
-//                        data.set(localData)
-//                        Log.i("ON ERROR RETURN", "temp=" + localData?.temp)
-//                        localData
-//                    }
-                    .subscribe({ weatherData ->
-                        Log.i(
-                            "SAVE WEATHER",
-                            "" + weatherData.name + " " + weatherData.temp
-                        )
-                        rep.saveWeather(weatherData)
-                        data.set(weatherData)
-                    }, { e ->
-                    }, {
+        remoteDis?.dispose()
 
-                    })
-            )
+        val refreshPeriod=Settings.refreshPeriod.toLong()
+        var initDelay=0L
 
-            //compositeDisposable.add(dis)
-        } catch (e: Exception) {
-            Log.i("ERROR Refresh", e.message.toString())
-            compositeDisposable.clear()
+        if(!force){
+            // при старте (onResume) расчёт initDelay
+            val weatherData=data.get()
+            if(weatherData!=null){
+                initDelay= (refreshPeriod - (Common.timeInMinutes() - weatherData.time)).coerceAtLeast(0)
+            }
         }
+
+        Log.i("INIT DELAY",""+initDelay)
+        remoteDis= rep.remoteFlow(loc, refreshPeriod, initDelay)
+                .doOnError { errorHandling(it) }
+                .onErrorResumeNext(rep.getWeatherFlowable().toObservable())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ weatherData ->
+                    Log.i("DATA FROM REMOTE", weatherData.toString())
+                    rep.saveWeather(weatherData)
+                    if(data.get()==null){
+                        init()
+                    }
+                }, { e ->
+                }, {
+
+                })
+    }
+
+    private fun errorHandling(e: Throwable) {
+        var message = e.message.toString()
+        when (e) {
+            is HttpException -> {
+                Log.e("HTTP ERROR", message)
+            }
+            is SocketTimeoutException -> {
+                Log.e("TIMEOUT ERROR", message)
+            }
+            is IOException -> {
+                Log.e("NETWORK ERROR", message)
+            }
+            is CompositeException -> {
+                Log.e("COMPOSITE EXCEPTION", message)
+                val ce = e as CompositeException
+                message =
+                    ce.exceptions.joinToString("\n") { e -> e.message.toString() }
+            }
+            else -> {
+                Log.e("UNKNOWN ERROR", message)
+            }
+        }
+        errorMessage.set(message)
+
     }
 
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
+        remoteDis?.dispose()
     }
 
 }

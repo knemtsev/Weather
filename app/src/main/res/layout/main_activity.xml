@@ -17,7 +17,7 @@
         tools:context=".MainActivity2">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/toolbar"
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/design_default_color_primary"
@@ -25,34 +25,20 @@
             app:title="@string/app_name"
             >
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="left">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/app_name"
-                    android:layout_marginLeft="@dimen/def_margin"
-                    android:textSize="18dp"
-                    android:textColor="@color/white"
-                    />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    />
-
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                 >
                 <com.google.android.material.chip.Chip
                     android:id="@+id/but_refresh"
                     style="@style/ButtonChip"
                     android:text="@string/but_refresh"
                     app:chipIcon="@drawable/ic_baseline_refresh_24" />
-            </LinearLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
         </com.google.android.material.appbar.AppBarLayout>
 
 
@@ -112,7 +98,7 @@
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="TextView" />
+                    android:text="@{vm.dataTime()}" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -160,7 +146,7 @@
                     <TextView
                         android:id="@+id/value_temp"
                         style="@style/TextData"
-                        android:text="@{vm.data.temp.toString()}"
+                        android:text="@{Double.toString(vm.data.temp)}"
                         app:layout_constraintBottom_toBottomOf="@+id/text_temp"
                         app:layout_constraintStart_toStartOf="@+id/value_wind_speed"
                         app:layout_constraintTop_toTopOf="@+id/text_temp" />
@@ -168,7 +154,7 @@
                     <TextView
                         android:id="@+id/value_wind_speed"
                         style="@style/TextData"
-                        android:text="@{vm.data.windSpeed.toString()}"
+                        android:text="@{Double.toString(vm.data.windSpeed)}"
                         app:layout_constraintBottom_toBottomOf="@+id/text_wind_speed"
                         app:layout_constraintStart_toStartOf="@+id/value_wind_dir"
                         app:layout_constraintTop_toTopOf="@+id/text_wind_speed" />
@@ -177,7 +163,7 @@
                         android:id="@+id/value_wind_dir"
                         style="@style/TextData"
                         android:layout_marginStart="32dp"
-                        android:text="@{vm.data.windDeg.toString()}"
+                        android:text="@{Double.toString(vm.data.windDeg)}"
                         app:layout_constraintBottom_toBottomOf="@+id/text_wind_dir"
                         app:layout_constraintStart_toEndOf="@+id/text_wind_dir"
                         app:layout_constraintTop_toTopOf="@+id/text_wind_dir" />

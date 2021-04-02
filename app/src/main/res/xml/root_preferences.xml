@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/header_refresh">
+
+        <EditTextPreference
+            app:key="refresh_period"
+            app:title="@string/title_refresh_period"
+            app:useSimpleSummaryProvider="true"
+            app:defaultValue="10"
+            />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

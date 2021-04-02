@@ -26,9 +26,7 @@ class WeatherRepository(
             weatherDao.saveWeather(data)
     }
 
-    fun remoteFlow(loc: Location, timeout: Int) : Observable<WeatherData>
-    = Observable.interval(0, timeout.toLong(), TimeUnit.MINUTES, Schedulers.io())
-        .flatMap {
-            getWeatherRemote(loc)
-        }
+    fun remoteFlow(loc: Location, timeout: Long, initDelay: Long=0) : Observable<WeatherData>
+    = Observable.interval(initDelay, timeout, TimeUnit.MINUTES, Schedulers.io())
+        .flatMap { getWeatherRemote(loc)  }
 }
