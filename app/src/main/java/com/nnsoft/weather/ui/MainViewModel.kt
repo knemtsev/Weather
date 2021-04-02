@@ -1,10 +1,12 @@
 package com.nnsoft.weather.ui
 
+import android.app.Application
 import android.location.Location
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
+import com.nnsoft.weather.R
 import com.nnsoft.weather.Settings
 import com.nnsoft.weather.WeatherApplication
 import com.nnsoft.weather.data.entities.WeatherData
@@ -24,7 +26,8 @@ import java.net.SocketTimeoutException
 
 class MainViewModel : ViewModel() {
 
-    val rep: WeatherRepository by lazy { WeatherApplication.instance.weatherRepository }
+    val app by lazy { WeatherApplication.instance }
+    val rep: WeatherRepository by lazy { app.weatherRepository }
 
 
     var data = ObservableField<WeatherData>()
@@ -34,8 +37,14 @@ class MainViewModel : ViewModel() {
     fun isErrorMessageVisible() =
         if (errorMessage.get().isNullOrEmpty()) View.GONE else View.VISIBLE
 
+    fun windName(): String {
+        return data.get()?.let {
+            app.resources.getStringArray(R.array.wind_direction)[it.windIndex()]+" "
+        } ?: ""
 
-    val compositeDisposable = CompositeDisposable()
+    }
+
+    private val compositeDisposable = CompositeDisposable()
 
     fun dataTime() = Common.minutes2DateS(data.get()?.time ?: 0)
 
@@ -44,6 +53,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun init() {
+        Log.i("INIT", "")
         val disposable=rep.getWeatherFlowable().toObservable()
             .doOnError { e -> errorHandling(e) }
             .observeOn(AndroidSchedulers.mainThread())

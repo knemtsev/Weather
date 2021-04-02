@@ -12,4 +12,5 @@ class OpenWeatherService {
     fun getWeather(lat: Double, lon: Double, apiId: String): Observable<WeatherResult> {
         return retrofit.getWeather(lat.toString(),lon.toString(),apiId)
     }
+
 }

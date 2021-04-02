@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Погода</string>
+    <string name="action_settings">Настройки</string>
     <string name="but_refresh">Refresh</string>
     <string name="gplay_is_missing">Google Play Services отсутствуют</string>
     <string name="gplay_disabled">Google Play Services отключены</string>
@@ -7,6 +9,19 @@
     <string name="text_temp">Температура</string>
     <string name="wind_speed">Скорость</string>
     <string name="wind_direction">Направление</string>
-    <string name="header_refresh">Refresh</string>
-    <string name="title_refresh_period">Weather refresh period (minutes)</string>
+    <string name="header_refresh">Обновить</string>
+    <string name="title_refresh_period">Период обновления погоды (минуты)</string>
+    <string name="title_activity_settings">Настройки</string>
+
+    <array name="wind_direction">
+        <item>С</item>
+        <item>СВ</item>
+        <item>В</item>
+        <item>ЮВ</item>
+        <item>Ю</item>
+        <item>ЮЗ</item>
+        <item>З</item>
+        <item>СЗ</item>
+    </array>
+
 </resources>

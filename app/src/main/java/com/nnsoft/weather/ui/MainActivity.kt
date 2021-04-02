@@ -1,7 +1,6 @@
 package com.nnsoft.weather.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -16,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,13 +53,13 @@ class MainActivity : AppCompatActivity() {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
             bind.refresh.setOnRefreshListener {
-                refresh()
+                refresh(true)
                 bind.refresh.isRefreshing=false
             }
 
             bind.butRefresh.setOnClickListener {
                 bind.refresh.isRefreshing=true
-                refresh()
+                refresh(true)
                 bind.refresh.isRefreshing=false
             }
 
@@ -68,10 +69,26 @@ class MainActivity : AppCompatActivity() {
                 subscribeOnLocation()
             }
 
+            val img=bind.weatherIcon
+
             val onPropertyChangedCallback=object: Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                     Log.i("PROPERTY CHANGED", "Prop id=" + propertyId)
                     bind.invalidateAll()
+
+                    val weatherData=viewModel.data.get()
+                    if(weatherData!=null) {
+                        val imgURL="https://openweathermap.org/img/w/"+weatherData.iconId+".png"
+                        Log.i("LOAD IMAGE", imgURL)
+                        val options: RequestOptions = RequestOptions()
+                            .fitCenter()
+                            .placeholder(R.mipmap.ic_launcher_round)
+                            .error(R.mipmap.ic_launcher_round)
+                        Glide.with(this@MainActivity)
+                            .load(imgURL)
+                            .apply(options)
+                            .into(bind.weatherIcon)
+                    }
                 }
             }
             viewModel.data.addOnPropertyChangedCallback(onPropertyChangedCallback)
@@ -88,24 +105,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refresh(false)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.dispose()
     }
-    private fun newLocation(location: Location){
+    private fun newLocation(location: Location, force: Boolean = false){
         bind.textLocation.text = "lat=${location.latitude} lon=${location.longitude}"
         Log.i("NEW LOCATION", bind.textLocation.text.toString())
 
-        viewModel.refresh(location)
+        viewModel.refresh(location, force)
 
         bind.vm=viewModel
         bind.invalidateAll()
     }
 
-    private fun refresh() {
+    private fun refresh(force: Boolean = false) {
         Log.i("refresh", "start")
         getLocationTask()?.addOnSuccessListener { location ->
-            location?.let { newLocation(location)}
+            location?.let { newLocation(location, force)}
         }
     }
 
@@ -114,7 +136,6 @@ class MainActivity : AppCompatActivity() {
             location?.let { newLocation(location)}
         }
     }
-
 
     private val LOCATION_REQUEST=101
 

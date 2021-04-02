@@ -17,4 +17,9 @@ open class WeatherData (
     override fun toString(): String {
         return name+" "+Common.minutes2DateS(time)+" "+temp+" "+windSpeed+" "+windDeg
     }
+
+    /**
+     *  индекс направления ветра от 0 до 7
+     */
+    fun windIndex(): Int =((windDeg+23)%360)/45
 }
